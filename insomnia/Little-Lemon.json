@@ -1,0 +1,425 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_source": "little-lemon",
+  "resources": [
+    {
+      "_id": "wrk_littlelemon",
+      "_type": "workspace",
+      "name": "Little Lemon",
+      "description": "Menu, bookings, and token authentication",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_littlelemon",
+      "_type": "environment",
+      "parentId": "wrk_littlelemon",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://127.0.0.1:8000",
+        "username": "reviewer",
+        "email": "reviewer@example.com",
+        "password": "",
+        "staff_username": "",
+        "staff_password": "",
+        "customer_token": "",
+        "staff_token": "",
+        "menu_id": 1,
+        "booking_id": 1,
+        "booking_date": "2030-12-01T19:00:00+03:00"
+      }
+    },
+    {
+      "_id": "req_home",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Homepage",
+      "method": "GET",
+      "url": "{{ _.base_url }}/",
+      "headers": [],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_register",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Register customer",
+      "method": "POST",
+      "url": "{{ _.base_url }}/restaurant/auth/users/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ _.username }}\",\n  \"email\": \"{{ _.email }}\",\n  \"password\": \"{{ _.password }}\"\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Customer login",
+      "method": "POST",
+      "url": "{{ _.base_url }}/restaurant/auth/token/login/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ _.username }}\",\n  \"password\": \"{{ _.password }}\"\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_staff_login",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Staff login",
+      "method": "POST",
+      "url": "{{ _.base_url }}/restaurant/auth/token/login/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ _.staff_username }}\",\n  \"password\": \"{{ _.staff_password }}\"\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_menu_list",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "List menu",
+      "method": "GET",
+      "url": "{{ _.base_url }}/restaurant/api/menu/",
+      "headers": [],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_menu_search",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Search and order menu",
+      "method": "GET",
+      "url": "{{ _.base_url }}/restaurant/api/menu/?search=salad&ordering=price&page=1",
+      "headers": [],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_menu_create",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Create menu item",
+      "method": "POST",
+      "url": "{{ _.base_url }}/restaurant/api/menu/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.staff_token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Pasta\",\n  \"price\": \"14.00\",\n  \"inventory\": 20\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_menu_get",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Retrieve menu item",
+      "method": "GET",
+      "url": "{{ _.base_url }}/restaurant/api/menu/{{ _.menu_id }}/",
+      "headers": [],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_menu_put",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Replace menu item",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/restaurant/api/menu/{{ _.menu_id }}/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.staff_token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Pasta\",\n  \"price\": \"15.00\",\n  \"inventory\": 20\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_menu_patch",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Update menu inventory",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/restaurant/api/menu/{{ _.menu_id }}/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.staff_token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"inventory\": 15\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_menu_delete",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Delete menu item",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/restaurant/api/menu/{{ _.menu_id }}/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.staff_token }}"
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_booking_list",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "List own bookings",
+      "method": "GET",
+      "url": "{{ _.base_url }}/restaurant/api/booking/tables/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_booking_create",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Create booking",
+      "method": "POST",
+      "url": "{{ _.base_url }}/restaurant/api/booking/tables/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Review Guest\",\n  \"no_of_guests\": 2,\n  \"booking_date\": \"{{ _.booking_date }}\"\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_booking_get",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Retrieve booking",
+      "method": "GET",
+      "url": "{{ _.base_url }}/restaurant/api/booking/tables/{{ _.booking_id }}/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_booking_put",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Replace booking",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/restaurant/api/booking/tables/{{ _.booking_id }}/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Review Guest\",\n  \"no_of_guests\": 3,\n  \"booking_date\": \"{{ _.booking_date }}\"\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_booking_patch",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Update booking guests",
+      "method": "PATCH",
+      "url": "{{ _.base_url }}/restaurant/api/booking/tables/{{ _.booking_id }}/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"no_of_guests\": 4\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_booking_all",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Staff list all bookings",
+      "method": "GET",
+      "url": "{{ _.base_url }}/restaurant/api/booking/tables/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.staff_token }}"
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_booking_delete",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Delete booking",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/restaurant/api/booking/tables/{{ _.booking_id }}/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_logout",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Customer logout",
+      "method": "POST",
+      "url": "{{ _.base_url }}/restaurant/auth/token/logout/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    }
+  ]
+}
