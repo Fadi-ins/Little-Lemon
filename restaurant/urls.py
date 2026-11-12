@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
 
 from .views import BookingViewSet, LoginView, LogoutView, MenuViewSet, RegistrationView, home
 
@@ -10,6 +11,7 @@ router.register("booking/tables", BookingViewSet, basename="booking")
 urlpatterns = [
     path("", home, name="restaurant-home"),
     path("api/", include(router.urls)),
+    path("api-token-auth/", obtain_auth_token, name="api-token-auth"),
     path("auth/users/", RegistrationView.as_view(), name="register"),
     path("auth/token/login/", LoginView.as_view(), name="login"),
     path("auth/token/logout/", LogoutView.as_view(), name="logout"),

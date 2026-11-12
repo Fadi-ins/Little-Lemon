@@ -110,6 +110,110 @@
       "settingSendCookies": false
     },
     {
+      "_id": "req_djoser_register",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Djoser register customer",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/users/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ _.username }}\",\n  \"email\": \"{{ _.email }}\",\n  \"password\": \"{{ _.password }}\"\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_djoser_login",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Djoser login (copy auth_token)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/token/login/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ _.username }}\",\n  \"password\": \"{{ _.password }}\"\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_djoser_me",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Djoser current user profile",
+      "method": "GET",
+      "url": "{{ _.base_url }}/auth/users/me/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_djoser_logout",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "Djoser logout",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/token/logout/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Token {{ _.customer_token }}"
+        }
+      ],
+      "body": {},
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
+      "_id": "req_api_token_auth",
+      "_type": "request",
+      "parentId": "wrk_littlelemon",
+      "name": "DRF api-token-auth login",
+      "method": "POST",
+      "url": "{{ _.base_url }}/restaurant/api-token-auth/",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"{{ _.username }}\",\n  \"password\": \"{{ _.password }}\"\n}"
+      },
+      "authentication": {},
+      "parameters": [],
+      "settingStoreCookies": true,
+      "settingSendCookies": false
+    },
+    {
       "_id": "req_menu_list",
       "_type": "request",
       "parentId": "wrk_littlelemon",

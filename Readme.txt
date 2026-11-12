@@ -2,6 +2,7 @@ LITTLE LEMON WEB APPLICATION
 ==========================
 Django REST Framework back-end capstone: static HTML homepage, MySQL,
 menu CRUD, authenticated table booking CRUD, registration, and token login.
+Includes Djoser registration, profile, and token authentication endpoints.
 
 REVIEWER QUICK START (WINDOWS POWERSHELL)
 1. Install Python 3.12+ and MySQL 8.4. Open this folder in VS Code.
@@ -49,6 +50,11 @@ All API paths end with a slash. Send JSON with Content-Type: application/json.
 GET     /                                      Static HTML restaurant homepage
 GET     /restaurant/                           Same homepage
 GET     /restaurant/api/                       Browsable API root
+POST    /auth/users/                           Djoser customer registration
+GET     /auth/users/me/                        Current Djoser user (authenticated)
+POST    /auth/token/login/                     Djoser token login (auth_token)
+POST    /auth/token/logout/                    Djoser token revocation
+POST    /restaurant/api-token-auth/            DRF obtain_auth_token (token)
 POST    /restaurant/auth/users/                Register a customer
 POST    /restaurant/auth/token/login/          Obtain an API token
 POST    /restaurant/auth/token/logout/         Revoke the current API token
@@ -101,6 +107,30 @@ Use a strong password for the new test account. No credentials are bundled.
 8. Delete your booking: expected 204. Log out: expected 204. Requests with
    the revoked token then return 401. Use token auth when testing logout;
    browser session logout is available separately through /api-auth/logout/.
+
+DJOSER AUTHENTICATION
+The project urls.py includes djoser.urls and djoser.urls.authtoken under
+/auth/. INSTALLED_APPS includes djoser and rest_framework.authtoken.
+Register with POST /auth/users/ using the registration body below.
+Login with POST /auth/token/login/ using username and password.
+Djoser returns {"auth_token":"..."}; copy auth_token into customer_token
+or staff_token in the Insomnia environment. GET /auth/users/me/ returns the
+current user's profile. POST /auth/token/logout/ revokes the token.
+The existing /restaurant/auth/ endpoints and /restaurant/api-token-auth/
+return {"token":"..."} for login. All routes use the same users and tokens.
+Register a username only once; logging in through either route works.
+The collection includes Djoser register, login, profile, logout, and the
+api-token-auth request. Password reset email delivery is outside this local
+review setup and requires email and reset-link configuration.
+
+BROWSABLE API AND PROJECT STRUCTURE
+Open /restaurant/api/menu/ for the public browsable menu. For protected
+bookings or the API root, sign in through /api-auth/login/ first. REST
+clients can send Authorization: Token <token> instead.
+littlelemon/ is the Django project; restaurant/ is the Django application.
+The homepage template is templates/restaurant/index.html, found through
+TEMPLATES[0]['DIRS'] = [BASE_DIR / 'templates'].
+Unit and API tests are restaurant/tests/test_models.py and test_views.py.
 
 EXAMPLE JSON BODIES
 Registration:

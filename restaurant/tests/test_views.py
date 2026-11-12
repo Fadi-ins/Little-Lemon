@@ -70,6 +70,64 @@ class AuthenticationTests(APITestCase):
         }).status_code, 400)
 
 
+class DjoserAuthenticationTests(APITestCase):
+    def test_registration_token_login_profile_and_logout(self):
+        response = self.client.post("/auth/users/", {
+            "username": "djoserguest", "email": "djoser@example.com", "password": PASSWORD,
+        })
+        self.assertEqual(response.status_code, 201)
+        self.assertNotIn("password", response.data)
+        self.assertTrue(User.objects.get(username="djoserguest").check_password(PASSWORD))
+        login = self.client.post("/auth/token/login/", {"username": "djoserguest", "password": PASSWORD})
+        self.assertEqual(login.status_code, 200)
+        token = login.data["auth_token"]
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + token)
+        profile = self.client.get("/auth/users/me/")
+        self.assertEqual(profile.status_code, 200)
+        self.assertEqual(profile.data["username"], "djoserguest")
+        self.assertEqual(self.client.get(BOOKINGS).status_code, 200)
+        self.assertEqual(self.client.post("/auth/token/logout/").status_code, 204)
+        self.assertFalse(Token.objects.filter(key=token).exists())
+        self.assertEqual(self.client.get(BOOKINGS).status_code, 401)
+
+    def test_registration_cannot_grant_staff_or_superuser(self):
+        response = self.client.post("/auth/users/", {
+            "username": "safeguest", "email": "safe@example.com", "password": PASSWORD,
+            "is_staff": True, "is_superuser": True,
+        })
+        self.assertEqual(response.status_code, 201)
+        user = User.objects.get(username="safeguest")
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+    def test_weak_password_and_duplicate_username_are_rejected(self):
+        payload = {"username": "uniqueguest", "email": "unique@example.com", "password": PASSWORD}
+        self.assertEqual(self.client.post("/auth/users/", {**payload, "password": "123"}).status_code, 400)
+        self.assertEqual(self.client.post("/auth/users/", payload).status_code, 201)
+        self.assertEqual(self.client.post("/auth/users/", payload).status_code, 400)
+
+    def test_api_token_auth_route_returns_a_working_token(self):
+        user = User.objects.create_user(username="tokenuser", password=PASSWORD)
+        response = self.client.post("/restaurant/api-token-auth/", {"username": "tokenuser", "password": PASSWORD})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Token.objects.get(key=response.data["token"]).user, user)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + response.data["token"])
+        self.assertEqual(self.client.get(BOOKINGS).status_code, 200)
+
+
+class BrowsableAPITests(APITestCase):
+    def test_menu_and_authenticated_api_root_render_html(self):
+        menu = self.client.get(MENU, HTTP_ACCEPT="text/html")
+        self.assertEqual(menu.status_code, 200)
+        self.assertIn("text/html", menu["Content-Type"])
+        self.assertContains(menu, "<html")
+        user = User.objects.create_user(username="browserguest", password=PASSWORD)
+        self.client.force_authenticate(user)
+        root = self.client.get("/restaurant/api/", HTTP_ACCEPT="text/html")
+        self.assertEqual(root.status_code, 200)
+        self.assertContains(root, "<html")
+
+
 class MenuAPITests(APITestCase):
     def setUp(self):
         self.staff = User.objects.create_user(username="staff", password=PASSWORD, is_staff=True)
